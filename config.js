@@ -1,7 +1,7 @@
 const config = {
     KafkaHost: 'localhost:9092',
     KafkaTopic: 'stream-topic',
-    maxQueueSize: 2,
+    maxQueueSize: 150,
     maxParallelHandles: 2
 }
 

@@ -22,7 +22,7 @@ app.post('/message', (req, res) => {
     const currentTime = Date.now()
     console.log(currentTime)
     try {
-        producer.produce(config.KafkaTopic, null, message, null, currentTime, (err, offset) => {
+        producer.produce(config.KafkaTopic, null, message, null, Date.now(), (err, offset) => {
             if (err) {
                 const errMsg = `Error in sending message from producer: ${err}`
                 console.log(errMsg)

@@ -1,12 +1,14 @@
 const kafka = require('node-rdkafka')
 const async = require('async')
 const config = require('./config')
+const util = require('util')
 
 const topics = [config.KafkaTopic]
 
 const consumerConfig = {
     'group.id': async.groupId,
     'metadata.broker.list': config.KafkaHost,
+    // 'enable.auto.commit': false
     // offset commit callback
     'offset_commit_cb': (err, topicPartitions) => {
         if (err) {
@@ -58,7 +60,10 @@ consumer.on('ready', (arg) => {
     console.log(`Consumer ready: ${JSON.stringify(arg)}`)
     consumer.subscribe(topics)
     // start consuming messages
-    consumer.consume()
+    setInterval(function () {
+        consumer.consume(100)
+    }, 500)
+
 })
 
 consumer.on('data', (data) => {
@@ -74,7 +79,7 @@ consumer.on('data', (data) => {
     if (msgQueue.length() > config.maxQueueSize) {
         consumer.pause(consumer.assignments())
         paused = true
-        console.log(`Queue is full of shit. Pause the consumer`)
+        // console.log(`Queue is full of shit. Pause the consumer`)
     }
 })
 
@@ -89,13 +94,11 @@ const handleCB = async (data, handler) => {
 }
 
 const onData = async (data) => {
-    return setTimeout(async () => {
-        return Promise.resolve()
-    }, 0.2 * 1000)
+    return Promise.resolve()
 }
 
 msgQueue.drain(function (err) {
-    console.log(`DRAIN FUNCTION`)
+    // console.log(`DRAIN FUNCTION`)
 
     if (err) {
         console.log(`Drain error: ${err}`)
